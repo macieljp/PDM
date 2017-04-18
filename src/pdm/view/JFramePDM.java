@@ -5,17 +5,51 @@
  */
 package pdm.view;
 
+import java.util.ArrayList;
+import pdm.Controller.ClienteController;
+import pdm.Controller.FornecedorController;
+import pdm.Controller.ProdutoController;
+import pdm.Model.Cliente;
+import pdm.Model.Fornecedor;
+import pdm.Model.Produto;
+
 /**
  *
  * @author Uso Exclusivo
  */
 public class JFramePDM extends javax.swing.JFrame {
+    
+    private ArrayList<Cliente> clientes = new ArrayList<>();
+    private ArrayList<Produto> produtos = new ArrayList<>();
+    private ArrayList<Fornecedor> fornecedores = new ArrayList<>();
+    private int produtoAtual = -1;
+    private int clienteAtual = -1;
+    private int fornecedorAtual = -1;
+    
+    private ClienteController clControl = new ClienteController();
+    private ProdutoController prControl = new ProdutoController();
+    private FornecedorController frControl = new FornecedorController();
+    
+    
 
     /**
      * Creates new form NewJFrame
      */
     public JFramePDM() {
         initComponents();
+        prepareComponents();
+        buscarProdutosByCriteria("");
+        buscarClientesByCriteria("");
+        buscarFornecedoresByCriteria("");
+
+        /* PRODUTOS */
+        prodNotEditable();
+
+        /* CLIENTES */
+        cliNotEditable();
+
+        /* FORNECEDORES */
+        forNotEditable();
     }
 
     /**
@@ -57,6 +91,7 @@ public class JFramePDM extends javax.swing.JFrame {
         btNovo = new javax.swing.JButton();
         btBuscar = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
+        btCancelar = new javax.swing.JButton();
         pClientes = new javax.swing.JPanel();
         tfbuscar1 = new javax.swing.JTextField();
         btBuscar1 = new javax.swing.JButton();
@@ -86,6 +121,7 @@ public class JFramePDM extends javax.swing.JFrame {
         lbPrecoCompra3 = new javax.swing.JLabel();
         lbQtd4 = new javax.swing.JLabel();
         lbValorQtd4 = new javax.swing.JLabel();
+        btCancelar3 = new javax.swing.JButton();
         pFornecedores = new javax.swing.JPanel();
         tfbuscar2 = new javax.swing.JTextField();
         btBuscar2 = new javax.swing.JButton();
@@ -106,7 +142,6 @@ public class JFramePDM extends javax.swing.JFrame {
         lbDescricao2 = new javax.swing.JLabel();
         lbNome2 = new javax.swing.JLabel();
         lbCodigo2 = new javax.swing.JLabel();
-        btNovo2 = new javax.swing.JButton();
         btSalvar2 = new javax.swing.JButton();
         btEditar2 = new javax.swing.JButton();
         btExcluir2 = new javax.swing.JButton();
@@ -115,6 +150,8 @@ public class JFramePDM extends javax.swing.JFrame {
         lbTamanho3 = new javax.swing.JLabel();
         lbQtd3 = new javax.swing.JLabel();
         lbValorQtd3 = new javax.swing.JLabel();
+        btNovo3 = new javax.swing.JButton();
+        btCancelar1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PDM");
@@ -162,16 +199,31 @@ public class JFramePDM extends javax.swing.JFrame {
         btAnterior.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btAnterior.setText("<<");
         btAnterior.setToolTipText("Anterior");
+        btAnterior.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAnteriorActionPerformed(evt);
+            }
+        });
         pProdutos.add(btAnterior, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 30, 50, 30));
 
         btProximo.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btProximo.setText(">>");
         btProximo.setToolTipText("Próximo");
+        btProximo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btProximoActionPerformed(evt);
+            }
+        });
         pProdutos.add(btProximo, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 30, 50, 30));
 
         btExcluir.setBackground(new java.awt.Color(255, 51, 51));
         btExcluir.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btExcluir.setText("Excluir");
+        btExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btExcluirActionPerformed(evt);
+            }
+        });
         pProdutos.add(btExcluir, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 460, 70, 30));
 
         lbValorQtd.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -242,22 +294,52 @@ public class JFramePDM extends javax.swing.JFrame {
         btEditar.setBackground(new java.awt.Color(204, 204, 204));
         btEditar.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btEditar.setText("Editar");
+        btEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEditarActionPerformed(evt);
+            }
+        });
         pProdutos.add(btEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 460, 70, 30));
 
         btSalvar.setBackground(new java.awt.Color(0, 255, 0));
         btSalvar.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btSalvar.setText("Salvar");
+        btSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSalvarActionPerformed(evt);
+            }
+        });
         pProdutos.add(btSalvar, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 460, 70, 30));
 
         btNovo.setBackground(new java.awt.Color(0, 102, 255));
         btNovo.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btNovo.setText("Novo");
+        btNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btNovoActionPerformed(evt);
+            }
+        });
         pProdutos.add(btNovo, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 460, 70, 30));
 
         btBuscar.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btBuscar.setText("Buscar");
+        btBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btBuscarActionPerformed(evt);
+            }
+        });
         pProdutos.add(btBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, 70, 30));
         pProdutos.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 402, 630, 10));
+
+        btCancelar.setBackground(new java.awt.Color(255, 56, 0));
+        btCancelar.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btCancelar.setText("Cancelar");
+        btCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCancelarActionPerformed(evt);
+            }
+        });
+        pProdutos.add(btCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 460, 80, 30));
 
         jTabbedPane1.addTab("Produtos", pProdutos);
 
@@ -271,11 +353,21 @@ public class JFramePDM extends javax.swing.JFrame {
 
         btBuscar1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btBuscar1.setText("Buscar");
+        btBuscar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btBuscar1ActionPerformed(evt);
+            }
+        });
         pClientes.add(btBuscar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, 70, 30));
 
         btAnterior1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btAnterior1.setText("<<");
         btAnterior1.setToolTipText("Anterior");
+        btAnterior1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAnterior1ActionPerformed(evt);
+            }
+        });
         pClientes.add(btAnterior1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 30, 50, 30));
 
         lbValorAtual1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -286,6 +378,11 @@ public class JFramePDM extends javax.swing.JFrame {
         btProximo1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btProximo1.setText(">>");
         btProximo1.setToolTipText("Próximo");
+        btProximo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btProximo1ActionPerformed(evt);
+            }
+        });
         pClientes.add(btProximo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 30, 50, 30));
 
         tfCodigo1.setPreferredSize(new java.awt.Dimension(6, 21));
@@ -326,21 +423,41 @@ public class JFramePDM extends javax.swing.JFrame {
         btNovo1.setBackground(new java.awt.Color(0, 102, 255));
         btNovo1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btNovo1.setText("Novo");
+        btNovo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btNovo1ActionPerformed(evt);
+            }
+        });
         pClientes.add(btNovo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 460, 70, 30));
 
         btSalvar1.setBackground(new java.awt.Color(0, 255, 0));
         btSalvar1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btSalvar1.setText("Salvar");
+        btSalvar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSalvar1ActionPerformed(evt);
+            }
+        });
         pClientes.add(btSalvar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 460, 70, 30));
 
         btEditar1.setBackground(new java.awt.Color(204, 204, 204));
         btEditar1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btEditar1.setText("Editar");
+        btEditar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEditar1ActionPerformed(evt);
+            }
+        });
         pClientes.add(btEditar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 460, 70, 30));
 
         btExcluir1.setBackground(new java.awt.Color(255, 51, 51));
         btExcluir1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btExcluir1.setText("Excluir");
+        btExcluir1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btExcluir1ActionPerformed(evt);
+            }
+        });
         pClientes.add(btExcluir1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 460, 70, 30));
         pClientes.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 402, 630, 10));
 
@@ -375,6 +492,16 @@ public class JFramePDM extends javax.swing.JFrame {
         lbValorQtd4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pClientes.add(lbValorQtd4, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 30, 60, 30));
 
+        btCancelar3.setBackground(new java.awt.Color(255, 56, 0));
+        btCancelar3.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btCancelar3.setText("Cancelar");
+        btCancelar3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCancelar3ActionPerformed(evt);
+            }
+        });
+        pClientes.add(btCancelar3, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 460, 80, 30));
+
         jTabbedPane1.addTab("Clientes", pClientes);
 
         pFornecedores.setMaximumSize(new java.awt.Dimension(640, 520));
@@ -387,11 +514,21 @@ public class JFramePDM extends javax.swing.JFrame {
 
         btBuscar2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btBuscar2.setText("Buscar");
+        btBuscar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btBuscar2ActionPerformed(evt);
+            }
+        });
         pFornecedores.add(btBuscar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, 70, 30));
 
         btAnterior2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btAnterior2.setText("<<");
         btAnterior2.setToolTipText("Anterior");
+        btAnterior2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAnterior2ActionPerformed(evt);
+            }
+        });
         pFornecedores.add(btAnterior2, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 30, 50, 30));
 
         lbValorAtual2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -402,6 +539,11 @@ public class JFramePDM extends javax.swing.JFrame {
         btProximo2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btProximo2.setText(">>");
         btProximo2.setToolTipText("Próximo");
+        btProximo2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btProximo2ActionPerformed(evt);
+            }
+        });
         pFornecedores.add(btProximo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 30, 50, 30));
 
         tfCodigo2.setPreferredSize(new java.awt.Dimension(6, 21));
@@ -453,24 +595,34 @@ public class JFramePDM extends javax.swing.JFrame {
         lbCodigo2.setText("Código:");
         pFornecedores.add(lbCodigo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 90, 60, 30));
 
-        btNovo2.setBackground(new java.awt.Color(0, 102, 255));
-        btNovo2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
-        btNovo2.setText("Novo");
-        pFornecedores.add(btNovo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 460, 70, 30));
-
         btSalvar2.setBackground(new java.awt.Color(0, 255, 0));
         btSalvar2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btSalvar2.setText("Salvar");
+        btSalvar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSalvar2ActionPerformed(evt);
+            }
+        });
         pFornecedores.add(btSalvar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 460, 70, 30));
 
         btEditar2.setBackground(new java.awt.Color(204, 204, 204));
         btEditar2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btEditar2.setText("Editar");
+        btEditar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btEditar2ActionPerformed(evt);
+            }
+        });
         pFornecedores.add(btEditar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 460, 70, 30));
 
         btExcluir2.setBackground(new java.awt.Color(255, 51, 51));
         btExcluir2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btExcluir2.setText("Excluir");
+        btExcluir2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btExcluir2ActionPerformed(evt);
+            }
+        });
         pFornecedores.add(btExcluir2, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 460, 70, 30));
         pFornecedores.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 402, 630, 10));
 
@@ -491,6 +643,26 @@ public class JFramePDM extends javax.swing.JFrame {
         lbValorQtd3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pFornecedores.add(lbValorQtd3, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 30, 60, 30));
 
+        btNovo3.setBackground(new java.awt.Color(0, 102, 255));
+        btNovo3.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btNovo3.setText("Novo");
+        btNovo3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btNovo3ActionPerformed(evt);
+            }
+        });
+        pFornecedores.add(btNovo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 460, 70, 30));
+
+        btCancelar1.setBackground(new java.awt.Color(255, 56, 0));
+        btCancelar1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btCancelar1.setText("Cancelar");
+        btCancelar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCancelar1ActionPerformed(evt);
+            }
+        });
+        pFornecedores.add(btCancelar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 460, 80, 30));
+
         jTabbedPane1.addTab("Fornecedores", pFornecedores);
 
         jPanel1.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 656, 558));
@@ -500,6 +672,198 @@ public class JFramePDM extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(672, 596));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBuscarActionPerformed
+        buscarProdutosByCriteria(tfbuscar.getText());
+    }//GEN-LAST:event_btBuscarActionPerformed
+
+    private void btBuscar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBuscar1ActionPerformed
+        buscarClientesByCriteria(tfbuscar1.getText());
+    }//GEN-LAST:event_btBuscar1ActionPerformed
+
+    private void btBuscar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btBuscar2ActionPerformed
+        buscarFornecedoresByCriteria(tfbuscar2.getText());
+    }//GEN-LAST:event_btBuscar2ActionPerformed
+
+    private void btAnterior2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAnterior2ActionPerformed
+        lastFornecedor();
+    }//GEN-LAST:event_btAnterior2ActionPerformed
+
+    private void btProximo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btProximo2ActionPerformed
+        proxFornecedor();
+    }//GEN-LAST:event_btProximo2ActionPerformed
+
+    private void btAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAnteriorActionPerformed
+        lastProduto();
+    }//GEN-LAST:event_btAnteriorActionPerformed
+
+    private void btProximoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btProximoActionPerformed
+        proxProduto();
+    }//GEN-LAST:event_btProximoActionPerformed
+
+    private void btNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNovoActionPerformed
+        prodEditable();
+        produtoAtual = produtos.size();
+        prepareComponents();
+        tfCodigo.setText("");
+        tfNome.setText("");
+        tfDescricao.setText("");
+        tfPrecoCompra.setText("");
+        tfPrecoVenda.setText("");
+        tfFornecedor.setText("");
+        tfTamanho.setText("");
+    }//GEN-LAST:event_btNovoActionPerformed
+
+    private void btSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarActionPerformed
+        Produto prod = new Produto();
+        prod.setCod(tfCodigo.getText());
+        prod.setNome(tfNome.getText());
+        prod.setDescricao(tfDescricao.getText());
+        prod.setPrecoCompra(tfPrecoCompra.getText());
+        prod.setPrecoVenda(tfPrecoVenda.getText());
+        prod.setFornecedor(tfFornecedor.getText());
+        prod.setTamanho(tfTamanho.getText());
+        if (produtoAtual >= produtos.size()) {
+            produtos.add(prod);
+            System.out.println("\nproduto"+prod.toString());
+            prControl.novoProduto(prod);
+        } else {
+            produtos.set(produtoAtual, prod);
+            prControl.setProdutos(produtos);
+        }
+        prepareComponents();
+        prodNotEditable();
+    }//GEN-LAST:event_btSalvarActionPerformed
+
+    private void btProximo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btProximo1ActionPerformed
+        proxCliente();
+    }//GEN-LAST:event_btProximo1ActionPerformed
+
+    private void btAnterior1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAnterior1ActionPerformed
+        lastCliente();
+    }//GEN-LAST:event_btAnterior1ActionPerformed
+
+    private void btSalvar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvar1ActionPerformed
+        Cliente prod = new Cliente();
+        prod.setCod(tfCodigo1.getText());
+        prod.setNome(tfNome1.getText());
+        prod.setMediaCompra(tfMediaCompras.getText());
+        prod.setTelefone(tfTelefone1.getText());
+        prod.setEmail(tfFrequencia.getText());
+        prod.setEndereco(tfDescricao1.getText());
+        prod.setCidade(tfCidade1.getText());
+        prod.setUf(tfUf1.getText());
+        if (produtoAtual >= produtos.size()) {
+            clientes.add(prod);
+            clControl.salvarNovoCliente(prod);
+        } else {
+            clientes.set(produtoAtual, prod);
+            clControl.setClientes(clientes);
+        }
+        prepareComponents();
+        cliNotEditable();
+    }//GEN-LAST:event_btSalvar1ActionPerformed
+
+    private void btSalvar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvar2ActionPerformed
+        Fornecedor prod = new Fornecedor();
+        prod.setCod(tfCodigo2.getText());
+        prod.setNome(tfNome2.getText());
+        prod.setDescricao(tfDescricao2.getText());
+        prod.setTelefone(tfTelefone.getText());
+        prod.setEmail(tfEmail.getText());
+        prod.setEndereco(tfEndereco.getText());
+        prod.setCidade(tfCidade.getText());
+        prod.setUf(tfUf.getText());
+        if ( fornecedorAtual >= fornecedores.size() ) {
+            fornecedores.add(prod);
+            frControl.novoFornecedor(prod);
+        } else {
+            fornecedores.set(fornecedorAtual, prod);
+            frControl.setFornecedores(fornecedores);
+        }
+        prepareComponents();
+        forNotEditable();
+    }//GEN-LAST:event_btSalvar2ActionPerformed
+
+    private void btNovo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNovo1ActionPerformed
+        cliEditable();
+        clienteAtual = clientes.size();
+        prepareComponents();
+        tfCodigo1.setText("");
+        tfNome1.setText("");
+        tfMediaCompras.setText("");
+        tfTelefone1.setText("");
+        tfFrequencia.setText("");
+        tfDescricao1.setText("");
+        tfCidade1.setText("");
+        tfUf1.setText("");
+
+    }//GEN-LAST:event_btNovo1ActionPerformed
+
+    private void btEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditarActionPerformed
+        prodEditable();
+    }//GEN-LAST:event_btEditarActionPerformed
+
+    private void btEditar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar1ActionPerformed
+        cliEditable();
+    }//GEN-LAST:event_btEditar1ActionPerformed
+
+    private void btEditar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditar2ActionPerformed
+        forEditable();
+    }//GEN-LAST:event_btEditar2ActionPerformed
+
+    private void btNovo3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNovo3ActionPerformed
+        forEditable();
+        fornecedorAtual = fornecedores.size();
+        prepareComponents();
+        tfCodigo2.setText("");
+        tfNome2.setText("");
+        tfDescricao2.setText("");
+        tfTelefone.setText("");
+        tfEmail.setText("");
+        tfEndereco.setText("");
+        tfCidade.setText("");
+        tfUf.setText("");
+    }//GEN-LAST:event_btNovo3ActionPerformed
+
+    private void btCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelarActionPerformed
+        prodNotEditable();
+        produtoAtual--;
+        proxProduto();
+    }//GEN-LAST:event_btCancelarActionPerformed
+
+    private void btCancelar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelar3ActionPerformed
+        cliNotEditable();
+        clienteAtual--;
+        proxCliente();
+    }//GEN-LAST:event_btCancelar3ActionPerformed
+
+    private void btCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelar1ActionPerformed
+        forNotEditable();
+        fornecedorAtual--;
+        proxFornecedor();
+    }//GEN-LAST:event_btCancelar1ActionPerformed
+
+    private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
+        produtos.remove(produtoAtual);
+        prepareComponents();
+        proxProduto();
+        prControl.setProdutos(produtos);
+    }//GEN-LAST:event_btExcluirActionPerformed
+
+    private void btExcluir1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluir1ActionPerformed
+        clientes.remove(clienteAtual);
+        prepareComponents();
+        proxCliente();
+        clControl.setClientes(clientes);
+    }//GEN-LAST:event_btExcluir1ActionPerformed
+
+    private void btExcluir2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluir2ActionPerformed
+        fornecedores.remove(fornecedorAtual);
+        prepareComponents();
+        proxFornecedor();
+        frControl.setFornecedores(fornecedores);
+    }//GEN-LAST:event_btExcluir2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -544,6 +908,9 @@ public class JFramePDM extends javax.swing.JFrame {
     private javax.swing.JButton btBuscar;
     private javax.swing.JButton btBuscar1;
     private javax.swing.JButton btBuscar2;
+    private javax.swing.JButton btCancelar;
+    private javax.swing.JButton btCancelar1;
+    private javax.swing.JButton btCancelar3;
     private javax.swing.JButton btEditar;
     private javax.swing.JButton btEditar1;
     private javax.swing.JButton btEditar2;
@@ -552,7 +919,7 @@ public class JFramePDM extends javax.swing.JFrame {
     private javax.swing.JButton btExcluir2;
     private javax.swing.JButton btNovo;
     private javax.swing.JButton btNovo1;
-    private javax.swing.JButton btNovo2;
+    private javax.swing.JButton btNovo3;
     private javax.swing.JButton btProximo;
     private javax.swing.JButton btProximo1;
     private javax.swing.JButton btProximo2;
@@ -627,4 +994,312 @@ public class JFramePDM extends javax.swing.JFrame {
     private javax.swing.JTextField tfbuscar1;
     private javax.swing.JTextField tfbuscar2;
     // End of variables declaration//GEN-END:variables
+
+    private void prepareComponents() {
+        lbValorQtd.setText(String.valueOf((produtos == null)? 0 : produtos.size()));
+        lbValorQtd4.setText(String.valueOf((clientes == null)? 0 : clientes.size()));
+        lbValorQtd3.setText(String.valueOf((fornecedores == null)? 0 : fornecedores.size()));
+        lbValorAtual.setText(String.valueOf((produtoAtual < 0 )? "-" : produtoAtual+1));
+        lbValorAtual1.setText(String.valueOf((clienteAtual < 0 )? "-" : clienteAtual+1));
+        lbValorAtual2.setText(String.valueOf((fornecedorAtual < 0 )? "-" : fornecedorAtual+1));
+    }
+    
+    private void prodNotEditable() {
+        tfCodigo.setEditable(false);
+        tfNome.setEditable(false);
+        tfDescricao.setEditable(false);
+        tfPrecoCompra.setEditable(false);
+        tfPrecoVenda.setEditable(false);
+        tfFornecedor.setEditable(false);
+        tfTamanho.setEditable(false);
+        
+        btSalvar.setEnabled(false);
+        btNovo.setEnabled(true);
+        btEditar.setEnabled(true);
+        btExcluir.setEnabled(true);
+        btBuscar.setEnabled(true);
+        btCancelar.setEnabled(false);
+        btAnterior.setEnabled(true);
+        btProximo.setEnabled(true);
+    }
+    
+    private void cliNotEditable() {
+        tfCodigo1.setEditable(false);
+        tfNome1.setEditable(false);
+        tfMediaCompras.setEditable(false);
+        tfTelefone1.setEditable(false);
+        tfFrequencia.setEditable(false);
+        tfDescricao1.setEditable(false);
+        tfCidade1.setEditable(false);
+        tfUf1.setEditable(false);
+        
+        btSalvar1.setEnabled(false);
+        btNovo1.setEnabled(true);        
+        btEditar1.setEnabled(true);
+        btExcluir1.setEnabled(true);
+        btBuscar1.setEnabled(true);
+        btCancelar3.setEnabled(false);
+        btAnterior1.setEnabled(true);
+        btProximo1.setEnabled(true);
+    }
+    
+    private void forNotEditable() {
+        tfCodigo2.setEditable(false);
+        tfNome2.setEditable(false);
+        tfDescricao2.setEditable(false);
+        tfTelefone.setEditable(false);
+        tfEmail.setEditable(false);
+        tfEndereco.setEditable(false);
+        tfCidade.setEditable(false);
+        tfUf.setEditable(false);
+        
+        btSalvar2.setEnabled(false);
+        btNovo3.setEnabled(true);
+        btEditar2.setEnabled(true);
+        btExcluir2.setEnabled(true);
+        btBuscar2.setEnabled(true);
+        btCancelar1.setEnabled(false);
+        btAnterior2.setEnabled(true);
+        btProximo2.setEnabled(true);
+    }
+
+    
+    
+    
+
+    private void prodEditable() {
+        tfCodigo.setEditable(true);
+        tfNome.setEditable(true);
+        tfDescricao.setEditable(true);
+        tfPrecoCompra.setEditable(true);
+        tfPrecoVenda.setEditable(true);
+        tfFornecedor.setEditable(true);
+        tfTamanho.setEditable(true);
+        
+        btSalvar.setEnabled(true);
+        btNovo.setEnabled(false);
+        btEditar.setEnabled(false);
+        btExcluir.setEnabled(false);
+        btBuscar.setEnabled(false);
+        btCancelar.setEnabled(true);
+        btAnterior.setEnabled(false);
+        btProximo.setEnabled(false);
+    }
+    
+    private void cliEditable() {
+        tfCodigo1.setEditable(true);
+        tfNome1.setEditable(true);
+        tfMediaCompras.setEditable(true);
+        tfTelefone1.setEditable(true);
+        tfFrequencia.setEditable(true);
+        tfDescricao1.setEditable(true);
+        tfCidade1.setEditable(true);
+        tfUf1.setEditable(true);
+        
+        btSalvar1.setEnabled(true);
+        btNovo1.setEnabled(false);
+        btEditar1.setEnabled(false);
+        btExcluir1.setEnabled(false);
+        btBuscar1.setEnabled(false);
+        btCancelar3.setEnabled(true);
+        btAnterior1.setEnabled(false);
+        btProximo1.setEnabled(false);
+    }
+    
+    private void forEditable() {
+        tfCodigo2.setEditable(true);
+        tfNome2.setEditable(true);
+        tfDescricao2.setEditable(true);
+        tfTelefone.setEditable(true);
+        tfEmail.setEditable(true);
+        tfEndereco.setEditable(true);
+        tfCidade.setEditable(true);
+        tfUf.setEditable(true);
+        
+        btSalvar2.setEnabled(true);
+        btNovo3.setEnabled(false);
+        btEditar2.setEnabled(false);
+        btExcluir2.setEnabled(false);
+        btBuscar2.setEnabled(false);
+        btCancelar1.setEnabled(true);
+        btAnterior2.setEnabled(false);
+        btProximo2.setEnabled(false);
+    }
+
+
+
+    
+    
+    
+    private void buscarProdutosByCriteria(String query) {
+        produtos = prControl.getAllProdutos();
+        System.out.println("size produtos" + produtos.size());
+        lbValorQtd.setText(String.valueOf(produtos.size()));
+        proxProduto();
+        prepareComponents();
+    }
+    
+    private void buscarClientesByCriteria(String query) {
+        clientes = clControl.getAllClientes();
+        lbValorQtd4.setText(String.valueOf(clientes.size()));
+        proxCliente();
+        prepareComponents();
+    }
+    
+    private void buscarFornecedoresByCriteria(String query) {
+        fornecedores = frControl.getAllFornecedores();
+        lbValorQtd4.setText(String.valueOf(fornecedores.size()));
+        proxFornecedor();
+        prepareComponents();
+    }
+
+    private void proxProduto() {
+        Produto prod;
+        if(produtoAtual < 0) {
+            prod = (produtos.size() > 0) ? produtos.get(0) : null;
+            if(prod == null) {
+                return;
+            }
+        } else if((produtoAtual+1) >= produtos.size()) {
+            prod = null;
+            return;
+        }
+        produtoAtual++;
+        prod = produtos.get(produtoAtual);
+        escreverProduto(prod);
+    }
+    
+    private void escreverProduto(Produto prod) {
+        tfCodigo.setText(prod.getCod());
+        tfNome.setText(prod.getNome());
+        tfDescricao.setText(prod.getDescricao());
+        tfPrecoCompra.setText(prod.getPrecoCompra());
+        tfPrecoVenda.setText(prod.getPrecoVenda());
+        tfFornecedor.setText(prod.getFornecedor());
+        tfTamanho.setText(prod.getTamanho());
+        lbValorAtual.setText(String.valueOf((produtoAtual < 0 )? "-" : produtoAtual+1));
+    }
+    
+    private void lastProduto() {
+        Produto prod;
+        if(produtoAtual < 0) {
+            prod = (produtos.size() > 0) ? produtos.get(0) : null;
+            if(prod == null) {
+                lbValorQtd.setText("0");
+                return;
+            }
+        } else if((produtoAtual-1) < 0) {
+            prod = null;
+            return;
+        }
+        produtoAtual--;
+        prod = produtos.get(produtoAtual);
+        escreverProduto(prod);
+    }
+
+    
+    
+    
+    
+
+    private void proxCliente() {
+        Cliente prod;
+        if(clienteAtual < 0) {
+            prod = (clientes.size() > 0) ? clientes.get(0) : null;
+            if(prod == null) {
+//                lbValorQtd4.setText("0");
+                return;
+            }
+        } else if((clienteAtual+1) >= clientes.size()) {
+            prod = null;
+            return;
+        }
+        clienteAtual++;
+        prod = clientes.get(clienteAtual);
+        escreverCliente(prod);
+    }
+    
+    private void escreverCliente(Cliente prod) {
+        tfCodigo1.setText(prod.getCod());
+        tfNome1.setText(prod.getNome());
+        tfMediaCompras.setText(prod.getMediaCompra());
+        tfTelefone1.setText(prod.getTelefone());
+        tfFrequencia.setText(prod.getEmail());
+        tfDescricao1.setText(prod.getEndereco());
+        tfCidade1.setText(prod.getCidade());
+        tfUf1.setText(prod.getUf());
+        lbValorAtual1.setText(String.valueOf((clienteAtual < 0 )? "-" : clienteAtual+1));
+    }
+    
+    private void lastCliente() {
+        Cliente prod;
+        if(clienteAtual < 0) {
+            prod = (clientes.size() > 0) ? clientes.get(0) : null;
+            if(prod == null) {
+                lbValorQtd4.setText("0");
+                return;
+            }
+        } else if((clienteAtual-1) < 0) {
+            prod = null;
+            return;
+        }
+        clienteAtual--;
+        prod = clientes.get(clienteAtual);
+        escreverCliente(prod);
+    }
+
+    
+    
+    
+    
+    
+    
+    public void proxFornecedor() {
+        Fornecedor fr;
+        if(fornecedorAtual < 0) {
+            fr = (fornecedores.size() > 0) ? fornecedores.get(0) : null;
+            if(fr == null) {
+//                lbValorQtd3.setText("0");
+                return;
+            }
+        } else if((fornecedorAtual+1) >= fornecedores.size()) {
+            fr = null;
+            return;
+        }
+        fornecedorAtual++;
+        fr = fornecedores.get(fornecedorAtual);
+        escreverFornecedor(fr);
+    }
+
+    
+    private void escreverFornecedor(Fornecedor fr) {
+        tfCodigo2.setText(fr.getCod());
+        tfNome2.setText(fr.getNome());
+        tfDescricao2.setText(fr.getDescricao());
+        tfTelefone.setText(fr.getTelefone());
+        tfEmail.setText(fr.getEmail());
+        tfEndereco.setText(fr.getEndereco());
+        tfCidade.setText(fr.getCidade());
+        tfUf.setText(fr.getUf());
+        lbValorAtual2.setText(String.valueOf((fornecedorAtual < 0 )? "-" : fornecedorAtual+1));
+    }
+    
+    private void lastFornecedor() {
+        Fornecedor fr;
+        if(fornecedorAtual < 0) {
+            fr = (fornecedores.size() > 0) ? fornecedores.get(0) : null;
+            if(fr == null) {
+                lbValorQtd3.setText("0");
+                return;
+            }
+        } else if((fornecedorAtual-1) < 0) {
+            fr = null;
+            return;
+        }
+        fornecedorAtual--;
+        fr = fornecedores.get(fornecedorAtual);
+        escreverFornecedor(fr);
+    }
+    
+    
 }

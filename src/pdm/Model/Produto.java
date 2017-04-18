@@ -9,16 +9,20 @@ package pdm.Model;
  *
  * @author JosielFaleiros
  */
-public class Produto {
-    private int cod;
+public class Produto implements java.io.Serializable {
+    private static final long serialVersionUID = 1335422L;
+    private String cod;
     private String nome;
     private String descricao;
     private String precoCompra;
     private String precoVenda;
     private String tamanho;
-    private Fornecedor fornecedor;
+    private String fornecedor;
 
-    public Produto(int cod, String nome, String descricao, String precoCompra, String precoVenda, String tamanho, Fornecedor fornecedor) {
+    public Produto() {
+    }
+
+    public Produto(String cod, String nome, String descricao, String precoCompra, String precoVenda, String tamanho, String fornecedor) {
         this.cod = cod;
         this.nome = nome;
         this.descricao = descricao;
@@ -68,15 +72,19 @@ public class Produto {
         this.tamanho = tamanho;
     }
 
-    public Fornecedor getFornecedor() {
+    public String getFornecedor() {
         return fornecedor;
     }
 
-    public void setFornecedor(Fornecedor fornecedor) {
+    public void setFornecedor(String fornecedor) {
         this.fornecedor = fornecedor;
     }
 
-    public int getCod() {
+    public void setCod(String cod) {
+        this.cod = cod;
+    }
+
+    public String getCod() {
         return cod;
     }
     

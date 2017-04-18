@@ -9,8 +9,9 @@ package pdm.Model;
  *
  * @author JosielFaleiros
  */
-public class Fornecedor {
-    private int cod;
+public class Fornecedor implements java.io.Serializable {
+    private static final long serialVersionUID = 1335423L;
+    private String cod;
     private String nome;
     private String descricao;
     private String telefone;
@@ -19,7 +20,11 @@ public class Fornecedor {
     private String cidade;
     private String uf;
 
-    public Fornecedor(int cod, String nome, String descricao, String telefone, String email, String endereco, String cidade, String uf) {
+    public Fornecedor() {
+    }
+    
+
+    public Fornecedor(String cod, String nome, String descricao, String telefone, String email, String endereco, String cidade, String uf) {
         this.cod = cod;
         this.nome = nome;
         this.descricao = descricao;
@@ -86,8 +91,12 @@ public class Fornecedor {
         this.uf = uf;
     }
 
-    public int getCod() {
+    public String getCod() {
         return cod;
+    }
+
+    public void setCod(String text) {
+        this.cod = text;
     }
     
 }
