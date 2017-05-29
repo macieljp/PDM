@@ -6,29 +6,34 @@
 package pdm.Controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import pdm.Model.Cliente;
-import pdm.Model.ClienteArquivo;
+import pdm.Model.dao.ClienteDAO;
 
 /**
  *
  * @author JosielFaleiros
  */
 public class ClienteController {
-    private ClienteArquivo cliArquivo;
+    private ClienteDAO clidao;
 
     public ClienteController() {
-        this.cliArquivo = new ClienteArquivo();
+        this.clidao = new ClienteDAO();
     }
     
-    public ArrayList getAllClientes() {
-        return cliArquivo.getAllClientes();
+    public ArrayList<Cliente> getAllClientes() {
+        return clidao.todos();
     }
     
     public void salvarNovoCliente(Cliente cliente) {
-        cliArquivo.novoCliente(cliente);
+        clidao.novo(cliente);
     }
 
-    public void setClientes(ArrayList<Cliente> clientes) {
-        cliArquivo.setClientes(clientes);
+    public void editarCliente(Cliente cliente) {
+        clidao.editar(cliente);
+    }
+
+    public void excluirCliente(Cliente cliente) {
+        clidao.excluir(cliente);
     }
 }

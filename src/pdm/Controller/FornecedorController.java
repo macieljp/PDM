@@ -6,29 +6,34 @@
 package pdm.Controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import pdm.Model.Fornecedor;
-import pdm.Model.FornecedorArquivo;
+import pdm.Model.dao.FornecedorDAO;
 
 /**
  *
  * @author JosielFaleiros
  */
 public class FornecedorController {
-    private FornecedorArquivo frArquivo;
+    private FornecedorDAO fordao;
 
     public FornecedorController() {
-        this.frArquivo = new FornecedorArquivo();
+        this.fordao = new FornecedorDAO();
     }
     
-    public ArrayList getAllFornecedores() {
-        return frArquivo.getAllFornecedores();
+    public ArrayList<Fornecedor> getAllFornecedores() {
+        return fordao.todos();
     }
     
-    public void novoFornecedor(Fornecedor fornecedor) {
-        frArquivo.novoFornecedor(fornecedor);
+    public void salvarFornecedor(Fornecedor fornecedor) {
+        fordao.novo(fornecedor);
     }
 
-    public void setFornecedores(ArrayList<Fornecedor> fornecedores) {
-        frArquivo.setFornecedores(fornecedores);
+    public void editarFornecedor(Fornecedor fornecedore) {
+        fordao.editar(fornecedore);
+    }
+
+    public void excluirFornecedor(Fornecedor fornecedore) {
+        fordao.excluir(fornecedore);
     }
 }

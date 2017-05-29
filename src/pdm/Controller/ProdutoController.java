@@ -6,29 +6,34 @@
 package pdm.Controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import pdm.Model.Produto;
-import pdm.Model.ProdutoArquivo;
+import pdm.Model.dao.ProdutoDAO;
 
 /**
  *
  * @author JosielFaleiros
  */
 public class ProdutoController {
-    private ProdutoArquivo prArquivo;
+    private ProdutoDAO prodao;
 
     public ProdutoController() {
-        this.prArquivo = new ProdutoArquivo();
+        this.prodao = new ProdutoDAO();
     }
     
-    public ArrayList getAllProdutos() {
-        return prArquivo.getAllProdutos();
+    public ArrayList<Produto> getAllProdutos() {
+        return prodao.todos();
     }
     
-    public void novoProduto(Produto produto) {
-        prArquivo.novoProduto(produto);
+    public void salvarProduto(Produto produto) {
+        prodao.novo(produto);
     }
     
-    public void setProdutos(ArrayList<Produto> produtos) {
-        prArquivo.setProdutos(produtos);
+    public void editarProduto(Produto produtos) {
+        prodao.editar(produtos);
+    }
+
+    public void excluirProduto(Produto produtos) {
+        prodao.excluir(produtos);
     }
 }

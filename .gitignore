@@ -1,6 +1,6 @@
 #ant specific
 dist/*
-build/*
+build/
 
 #netbeans specific
 core

@@ -5,6 +5,7 @@
  */
 package pdm.view;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import pdm.Controller.ClienteController;
 import pdm.Controller.FornecedorController;
@@ -12,6 +13,7 @@ import pdm.Controller.ProdutoController;
 import pdm.Model.Cliente;
 import pdm.Model.Fornecedor;
 import pdm.Model.Produto;
+import pdm.Model.dao.ConnectionManager;
 
 /**
  *
@@ -723,13 +725,15 @@ public class JFramePDM extends javax.swing.JFrame {
         prod.setPrecoVenda(tfPrecoVenda.getText());
         prod.setFornecedor(tfFornecedor.getText());
         prod.setTamanho(tfTamanho.getText());
+
+
         if (produtoAtual >= produtos.size()) {
             produtos.add(prod);
             System.out.println("\nproduto"+prod.toString());
-            prControl.novoProduto(prod);
+            prControl.salvarProduto(prod);
         } else {
             produtos.set(produtoAtual, prod);
-            prControl.setProdutos(produtos);
+            prControl.editarProduto(prod);
         }
         prepareComponents();
         prodNotEditable();
@@ -753,12 +757,12 @@ public class JFramePDM extends javax.swing.JFrame {
         prod.setEndereco(tfDescricao1.getText());
         prod.setCidade(tfCidade1.getText());
         prod.setUf(tfUf1.getText());
-        if (produtoAtual >= produtos.size()) {
+        if (clienteAtual >= clientes.size()) {
             clientes.add(prod);
             clControl.salvarNovoCliente(prod);
         } else {
             clientes.set(produtoAtual, prod);
-            clControl.setClientes(clientes);
+            clControl.editarCliente(prod);
         }
         prepareComponents();
         cliNotEditable();
@@ -776,10 +780,10 @@ public class JFramePDM extends javax.swing.JFrame {
         prod.setUf(tfUf.getText());
         if ( fornecedorAtual >= fornecedores.size() ) {
             fornecedores.add(prod);
-            frControl.novoFornecedor(prod);
+            frControl.salvarFornecedor(prod);
         } else {
             fornecedores.set(fornecedorAtual, prod);
-            frControl.setFornecedores(fornecedores);
+            frControl.editarFornecedor(prod);
         }
         prepareComponents();
         forNotEditable();
@@ -845,24 +849,24 @@ public class JFramePDM extends javax.swing.JFrame {
     }//GEN-LAST:event_btCancelar1ActionPerformed
 
     private void btExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluirActionPerformed
+        prControl.excluirProduto(produtos.get(produtoAtual));
         produtos.remove(produtoAtual);
         prepareComponents();
         proxProduto();
-        prControl.setProdutos(produtos);
     }//GEN-LAST:event_btExcluirActionPerformed
 
     private void btExcluir1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluir1ActionPerformed
+        clControl.excluirCliente(clientes.get(clienteAtual));
         clientes.remove(clienteAtual);
         prepareComponents();
         proxCliente();
-        clControl.setClientes(clientes);
     }//GEN-LAST:event_btExcluir1ActionPerformed
 
     private void btExcluir2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExcluir2ActionPerformed
+        frControl.excluirFornecedor(fornecedores.get(fornecedorAtual));
         fornecedores.remove(fornecedorAtual);
         prepareComponents();
         proxFornecedor();
-        frControl.setFornecedores(fornecedores);
     }//GEN-LAST:event_btExcluir2ActionPerformed
 
     /**
