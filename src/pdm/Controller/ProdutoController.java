@@ -5,8 +5,8 @@
  */
 package pdm.Controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.List;
 import pdm.Model.Produto;
 import pdm.Model.dao.ProdutoDAO;
 
@@ -15,25 +15,33 @@ import pdm.Model.dao.ProdutoDAO;
  * @author JosielFaleiros
  */
 public class ProdutoController {
-    private ProdutoDAO prodao;
+
+    private final ProdutoDAO proDao;
+    private Connection con;
+    
 
     public ProdutoController() {
-        this.prodao = new ProdutoDAO();
+        this.proDao = new ProdutoDAO();
+        
     }
-    
+
     public ArrayList<Produto> getAllProdutos() {
-        return prodao.todos();
+        return proDao.todos();
     }
-    
+
     public void salvarProduto(Produto produto) {
-        prodao.novo(produto);
-    }
+        
+        
     
-    public void editarProduto(Produto produtos) {
-        prodao.editar(produtos);
+
+    
+}
+
+public void editarProduto(Produto produtos) {
+        proDao.editar(produtos);
     }
 
     public void excluirProduto(Produto produtos) {
-        prodao.excluir(produtos);
+        proDao.excluir(produtos);
     }
 }

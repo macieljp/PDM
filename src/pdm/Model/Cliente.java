@@ -10,7 +10,7 @@ package pdm.Model;
  * @author JosielFaleiros
  */
 public class Cliente implements java.io.Serializable {
-    private static final long serialVersionUID = 1335421L;
+    //private static final long serialVersionUID = 1335421L;
     private String cod;
     private String nome;
     private String mediaCompra;
